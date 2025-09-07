@@ -1,0 +1,105 @@
+import json
+from datetime import datetime
+
+DATA_FILE = "notes.json"
+
+# Load existing notes
+def load_notes():
+    try:
+        with open(DATA_FILE, "r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return []
+
+# Save notes
+def save_notes(notes):
+    with open(DATA_FILE, "w") as f:
+        json.dump(notes, f, indent=4)
+
+# Add a note
+def add_note(notes):
+    title = input("Enter note title: ")
+    content = input("Enter note content: ")
+    note_id = len(notes) + 1
+    date = str(datetime.today().strftime("%Y-%m-%d %H:%M"))
+    
+    notes.append({"id": note_id, "title": title, "content": content, "date": date})
+    save_notes(notes)
+    print(" Note added!")
+
+# View all notes
+def view_notes(notes):
+    if not notes:
+        print("No notes available!")
+        return
+    print("\n--- All Notes ---")
+    for note in notes:
+        print(f"ID: {note['id']} | {note['title']} ({note['date']})")
+    print("-----------------")
+
+# Search notes
+def search_notes(notes):
+    keyword = input("Enter keyword to search: ")
+    results = [n for n in notes if keyword.lower() in n['title'].lower() or keyword.lower() in n['content'].lower()]
+    if not results:
+        print("No matching notes found.")
+    else:
+        for note in results:
+            print(f"ID: {note['id']} | {note['title']} | {note['content']}")
+
+# Edit note
+def edit_note(notes):
+    note_id = int(input("Enter note ID to edit: "))
+    for note in notes:
+        if note["id"] == note_id:
+            note["title"] = input("Enter new title: ")
+            note["content"] = input("Enter new content: ")
+            note["date"] = str(datetime.today().strftime("%Y-%m-%d %H:%M"))
+            save_notes(notes)
+            print("Note updated!")
+            return
+    print("Note not found.")
+
+# Delete note
+def delete_note(notes):
+    note_id = int(input("Enter note ID to delete: "))
+    new_notes = [n for n in notes if n["id"] != note_id]
+    if len(new_notes) != len(notes):
+        save_notes(new_notes)
+        print(" Note deleted!")
+    else:
+        print("Note not found.")
+
+# Main menu
+def main():
+    notes = load_notes()
+    while True:
+        print("\n--- Notes Manager ---")
+        print("1. Add Note")
+        print("2. View All Notes")
+        print("3. Search Notes")
+        print("4. Edit Note")
+        print("5. Delete Note")
+        print("6. Exit")
+        choice = input("Choose an option: ")
+
+        if choice == "1":
+            add_note(notes)
+        elif choice == "2":
+            view_notes(notes)
+        elif choice == "3":
+            search_notes(notes)
+        elif choice == "4":
+            edit_note(notes)
+            notes = load_notes()
+        elif choice == "5":
+            delete_note(notes)
+            notes = load_notes()
+        elif choice == "6":
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid choice!")
+
+if __name__ == "__main__":
+    main()
