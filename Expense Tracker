@@ -26,7 +26,7 @@ def add_expense(expenses):
     
     expenses.append({"category": category, "amount": amount, "date": date})
     save_data(expenses)
-    print("✅ Expense added!")
+    print("Expense added!")
 
 # View expenses
 def view_expenses(expenses):
@@ -52,7 +52,7 @@ def view_by_category(expenses):
 def monthly_summary(expenses):
     month = input("Enter month (YYYY-MM): ")
     total = sum(e["amount"] for e in expenses if e["date"].startswith(month))
-    print(f"💰 Total spent in {month}: ₹{total}")
+    print(f"Total spent in {month}: ₹{total}")
 
 # Main menu
 def main():
